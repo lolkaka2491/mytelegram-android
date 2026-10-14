@@ -1,0 +1,29 @@
+name: Build MyTelegram APK
+on:
+  workflow_dispatch:
+  push:
+    branches: [master]
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    steps:
+      - uses: actions/checkout@v4
+      - name: Free disk space
+        run: sudo rm -rf /usr/share/dotnet /opt/ghc /usr/local/share/boost "$AGENT_TOOLSDIRECTORY"
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - name: Install Android NDK and CMake
+        run: yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "ndk;27.2.12479018" "cmake;3.22.1" "platforms;android-36" "build-tools;36.0.0" > /dev/null
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.13'
+      - name: Build
+        run: gradle --parallel :TMessagesProj_App:assembleAfatRelease --stacktrace
+      - uses: actions/upload-artifact@v4
+        with:
+          name: MyTelegram-android
+          path: TMessagesProj_App/build/outputs/apk/**/*.apk
+          retention-days: 30
