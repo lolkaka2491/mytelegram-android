@@ -1,4 +1,4 @@
-name: Build MyTelegram APK
+name: Build Arogram APK
 on:
   workflow_dispatch:
   push:
@@ -26,6 +26,6 @@ jobs:
         run: gradle --parallel :TMessagesProj_App:assembleAfatRelease --stacktrace
       - uses: actions/upload-artifact@v4
         with:
-          name: MyTelegram-android
+          name: Arogram-android
           path: TMessagesProj_App/build/outputs/apk/**/*.apk
           retention-days: 30
